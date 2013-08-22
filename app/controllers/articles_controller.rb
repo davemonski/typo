@@ -46,6 +46,34 @@ class ArticlesController < ContentController
     end
   end
 
+ def merge(article1_id, article2_id)
+   article_1 = Article.find_by_id(article1_id)
+   article_2 = Article.find_by_id(article2_id)
+
+   merged_article = Article.create(:title => article1.title, :author => article1.author, :body => article1.body + article2.body,
+                                      :user_id => article1.user_id, :published => true, :allow_comments => true)
+      comments_1 = Feedback.find_all_by_article_id(article1_id)
+      unless comments1.blank?
+        comments1.each do |comment|
+          comment.article_id = merged_article.id
+          comment.save
+        end
+      end
+
+      comments2 = Feedback.find_all_by_article_id(article2_id)
+      unless comments2.blank?
+        comments2.each do |comment|
+          comment.article_id = merged_article.id
+          comment.save
+        end
+      end
+
+      Article.destroy(article1_id)
+      Article.destroy(article2_id)
+
+      return merged_article
+ end
+
   def search
     @canonical_url = url_for(:only_path => false, :controller => 'articles', :action => 'search', :page => params[:page], :q => params[:q])
     @articles = this_blog.articles_matching(params[:q], :page => params[:page], :per_page => @limit)
