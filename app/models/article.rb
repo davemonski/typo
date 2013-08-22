@@ -103,6 +103,34 @@ class Article < Content
       article
     end
 
+    def merge(article1_id, article2_id)
+      article1 = Article.find_by_id(article1_id)
+      article2 = Article.find_by_id(article2_id)
+
+      merged_article = Article.create(:title => article1.title, :author => article1.author, :body => article1.body + article2.body,
+                                      :user_id => article1.user_id, :published => true, :allow_comments => true)
+         comments1 = Feedback.find_all_by_article_id(article1_id)
+         unless comments1.blank?
+           comments1.each do |comment|
+             comment.article_id = merged_article.id
+             comment.save
+           end
+         end
+
+         comments2 = Feedback.find_all_by_article_id(article2_id)
+         unless comments2.blank?
+           comments2.each do |comment|
+             comment.article_id = merged_article.id
+             comment.save
+           end
+         end
+
+         Article.destroy(article1_id)
+         Article.destroy(article2_id)
+
+         return merged_article
+    end
+
     def search_with_pagination(search_hash, paginate_hash)
       
       state = (search_hash[:state] and ["no_draft", "drafts", "published", "withdrawn", "pending"].include? search_hash[:state]) ? search_hash[:state] : 'no_draft'

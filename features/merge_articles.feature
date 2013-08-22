@@ -7,8 +7,8 @@ Feature: Merge Articles
     Given the blog is set up
     And the following users exist:
       | login | password | email | name | profile_id |
-      | Bob | password | bob@bloomer.org | Blog Publisher | 2 |
-      | Jim | password | jim@aol.org | Blog Admin | 1 |
+      | bob | bob_pw | bob@bloomer.org | Blog Publisher | 2 |
+      | jim | jim_pw | jim@aol.org | Blog Admin | 1 |
     And the following articles exist:
       | title | author | body | published |
       | post one | Bob | Some article text here about dogs | true |
