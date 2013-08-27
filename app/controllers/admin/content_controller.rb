@@ -28,7 +28,7 @@ class Admin::ContentController < Admin::BaseController
   end
 
   def merge
-    Article.merge(params[:id], params[:merge_with])
+    Article.merge(params[:with])
     redirect_to '/admin/content'
   end
 

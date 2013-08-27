@@ -3,6 +3,9 @@ Given /the following users exist/ do |users_table|
     User.create!(user)
   end
 end
+
+
+
 Given /the following articles exist/ do |articles_table|
   articles_table.hashes.each do |article|
     Article.create!(article)
@@ -28,5 +31,7 @@ end
 
 When /^I attempt to merge with "(.*)"$/ do |title|
   fill_in 'merge_with', :with => Article.find_by_title(title).id
-  click_button 'Merge With This Article'
+  click_button 'Merge Articles'
 end
+
+

@@ -103,32 +103,26 @@ class Article < Content
       article
     end
 
-    def merge(article1_id, article2_id)
-      article1 = Article.find_by_id(article1_id)
+    def merge(article2_id)
       article2 = Article.find_by_id(article2_id)
 
-      merged_article = Article.create(:title => article1.title, :author => article1.author, :body => article1.body + article2.body,
-                                      :user_id => article1.user_id, :published => true, :allow_comments => true)
-         comments1 = Feedback.find_all_by_article_id(article1_id)
-         unless comments1.blank?
-           comments1.each do |comment|
-             comment.article_id = merged_article.id
-             comment.save
-           end
-         end
+      #make sure we ahve two articles and they aren't the same
+      if(self.id.nil? or article2_id.nil?)
+        return false
+      end
 
-         comments2 = Feedback.find_all_by_article_id(article2_id)
-         unless comments2.blank?
-           comments2.each do |comment|
-             comment.article_id = merged_article.id
-             comment.save
-           end
-         end
+      if(self.id == article2_id)
+        return false
+      end
 
-         Article.destroy(article1_id)
-         Article.destroy(article2_id)
+      #merge article 2 into the current one
+      self.body = self.body + article2.body
+      self.comments = self.comments + article2.comments
+      self.save!
 
-         return merged_article
+      article2.destroy
+
+      return true
     end
 
     def search_with_pagination(search_hash, paginate_hash)
